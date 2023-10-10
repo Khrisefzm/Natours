@@ -9,7 +9,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-app.get("/api/v1/tours", (req, res) => {
+getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     results: tours.length,
@@ -17,20 +17,18 @@ app.get("/api/v1/tours", (req, res) => {
       tours,
     },
   });
-});
+};
 
-app.get("/api/v1/tours/:id", (req, res) => {
-  // console.log(req.params);
-
+getTour = (req, res) => {
   const id = req.params.id * 1; //Convert a string in integer
+  const tour = tours.find((el) => el.id === id);
 
-  if (id > tours.length) {
+  if (!tour) {
     return res.status(404).json({
       status: "fail",
       messege: "invalid id",
     });
   }
-  const tour = tours.find((el) => el.id === id);
 
   res.status(200).json({
     status: "success",
@@ -38,9 +36,9 @@ app.get("/api/v1/tours/:id", (req, res) => {
       tour,
     },
   });
-});
+};
 
-app.post("/api/v1/tours", (req, res) => {
+createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
@@ -56,7 +54,10 @@ app.post("/api/v1/tours", (req, res) => {
       });
     }
   );
-});
+};
+
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+app.route("/api/v1/tours/:id").get(getTour);
 
 const port = 3000;
 app.listen(port, () => {
