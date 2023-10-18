@@ -5,6 +5,19 @@ const tours = JSON.parse(
 );
 
 // routes handler
+
+exports.checkID = (req, res, next, val) => {
+  const id = req.params.id * 1; //Convert a string in integer
+  const tour = tours.find((el) => el.id === id);
+  if (!tour) {
+    return res.status(404).json({
+      status: "fail",
+      messege: "invalid id",
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
@@ -19,13 +32,6 @@ exports.getAllTours = (req, res) => {
 exports.getTour = (req, res) => {
   const id = req.params.id * 1; //Convert a string in integer
   const tour = tours.find((el) => el.id === id);
-
-  if (!tour) {
-    return res.status(404).json({
-      status: "fail",
-      messege: "invalid id",
-    });
-  }
 
   res.status(200).json({
     status: "success",
